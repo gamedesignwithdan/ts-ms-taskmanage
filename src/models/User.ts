@@ -5,7 +5,6 @@ import jwt from 'jsonwebtoken';
 import { IUserDocument, SafeUserResponse } from './interfaces/IUserDocument';
 
 export interface IUser extends IUserDocument {
-    // comparePassword(password: string): boolean; 
     generateAuthToken(): string;
     getPublicProfile(): SafeUserResponse;
 }
@@ -60,7 +59,7 @@ UserSchema.methods.generateAuthToken = async function() {
     const user = this;
     const token = jwt.sign(
         {_id: user._id.toString()},
-        "thisismytestphrase",
+        process.env.JWT_SECRET as string,
         {expiresIn: "7 days"}
     )
     return token

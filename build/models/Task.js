@@ -31,7 +31,7 @@ var TaskSchema = new mongoose_1.Schema({
         default: false
     },
     owner: {
-        type: mongoose_1.default.Schema.Types.ObjectId,
+        type: mongoose_1.default.Types.ObjectId,
         required: true,
         ref: "User"
     }

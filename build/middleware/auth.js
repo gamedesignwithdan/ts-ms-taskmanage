@@ -11,7 +11,7 @@ function checkForAuth(req, res, next) {
     try {
         var token = (_a = req.header('Authorization')) === null || _a === void 0 ? void 0 : _a.replace('Bearer ', "");
         if (token) {
-            var decoded = jsonwebtoken_1.default.verify(token, "thisismytestphrase");
+            var decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
             var user = User_1.default.findById(decoded._id);
             if (user) {
                 req.query['decoded'] = decoded._id;

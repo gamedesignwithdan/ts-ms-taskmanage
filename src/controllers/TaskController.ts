@@ -4,7 +4,7 @@ import { controller, get, patch, post, use } from '../decorators';
 import Task from '../models/Task';
 import User from '../models/User';
 import { checkForAuth } from '../middleware/auth';
-import { Condition, ObjectID, ObjectId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 
 @controller('/tasks')
 export class TaskController {

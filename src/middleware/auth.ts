@@ -12,7 +12,7 @@ export function checkForAuth(req: Request, res: Response, next: NextFunction) {
     try {
         const token: string | undefined = req.header('Authorization')?.replace('Bearer ', "");
         if (token) {
-            const decoded: Idecoded = jwt.verify(token, "thisismytestphrase") as Idecoded;
+            const decoded: Idecoded = jwt.verify(token, process.env.JWT_SECRET as string) as Idecoded;
             const user = User.findById(decoded._id)
             if (user) {
                 req.query['decoded'] = decoded._id;

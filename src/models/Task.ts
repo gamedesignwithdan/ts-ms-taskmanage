@@ -1,4 +1,4 @@
-import mongoose, { model, Schema, Document, Types } from "mongoose";
+import mongoose, { model, Schema, Document } from "mongoose";
 
 export interface ITask extends Document {
     description: string,
@@ -17,7 +17,7 @@ const TaskSchema = new Schema({
         default: false
     },
     owner: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: mongoose.Types.ObjectId,
         required: true,
         ref: "User"
     }

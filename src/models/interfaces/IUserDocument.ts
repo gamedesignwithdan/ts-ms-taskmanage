@@ -28,5 +28,4 @@ export interface IUserDocument extends Document {
     [UserKeys.age]: number,
     [UserKeys.tokens]: Token[];
     [UserKeys.tasks]: typeof Task[];
-    // [key as keyof UserKeys]: string | number;
 }

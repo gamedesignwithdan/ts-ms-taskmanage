@@ -1,6 +1,6 @@
 import { connect }  from 'mongoose';
 
-const url: string  = 'mongodb://127.0.0.1:27017/task-manager-api';
+const url: string  = process.env.PROD_DATABASE as string;
 
 connect(url, {
     useNewUrlParser: true,
