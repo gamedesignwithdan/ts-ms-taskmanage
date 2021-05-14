@@ -65,55 +65,43 @@ var mongodb_1 = require("mongodb");
 var TaskController = /** @class */ (function () {
     function TaskController() {
     }
-    // @get('/')
-    TaskController.prototype.AllTasks = function (req, res) {
-        return __awaiter(this, void 0, void 0, function () {
-            var tasks, err_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, Task_1.default.find()];
-                    case 1:
-                        tasks = _a.sent();
-                        res.send(tasks);
-                        return [3 /*break*/, 3];
-                    case 2:
-                        err_1 = _a.sent();
-                        res.send(err_1);
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
+    //  GET /tasks?completed=false OR /tasks/?completed=true
     TaskController.prototype.AllMyTasks = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var user, err_2;
+            var match, user, err_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 3, , 4]);
-                        return [4 /*yield*/, User_1.default.findById(req.query.decoded)];
+                        match = {};
+                        if (req.query.completed) {
+                            match.completed = req.query.completed === 'true';
+                        }
+                        _a.label = 1;
                     case 1:
-                        user = _a.sent();
-                        return [4 /*yield*/, (user === null || user === void 0 ? void 0 : user.populate('tasks').execPopulate())];
+                        _a.trys.push([1, 4, , 5]);
+                        return [4 /*yield*/, User_1.default.findById(req.query.decoded)];
                     case 2:
+                        user = _a.sent();
+                        return [4 /*yield*/, (user === null || user === void 0 ? void 0 : user.populate({
+                                path: "tasks",
+                                match: match
+                            }).execPopulate())];
+                    case 3:
                         _a.sent();
                         res.send(user === null || user === void 0 ? void 0 : user.tasks);
-                        return [3 /*break*/, 4];
-                    case 3:
-                        err_2 = _a.sent();
-                        res.status(400).send(err_2);
-                        return [3 /*break*/, 4];
-                    case 4: return [2 /*return*/];
+                        return [3 /*break*/, 5];
+                    case 4:
+                        err_1 = _a.sent();
+                        res.status(400).send({ error: "Unauthorised!" });
+                        return [3 /*break*/, 5];
+                    case 5: return [2 /*return*/];
                 }
             });
         });
     };
     TaskController.prototype.getTask = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var task, err_3;
+            var task, err_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -131,8 +119,8 @@ var TaskController = /** @class */ (function () {
                         res.send(task);
                         return [3 /*break*/, 3];
                     case 2:
-                        err_3 = _a.sent();
-                        res.send(err_3);
+                        err_2 = _a.sent();
+                        res.send(err_2);
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
                 }
@@ -141,7 +129,7 @@ var TaskController = /** @class */ (function () {
     };
     TaskController.prototype.createTask = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var task, err_4;
+            var task, err_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -155,8 +143,8 @@ var TaskController = /** @class */ (function () {
                         res.status(201).send(task);
                         return [3 /*break*/, 4];
                     case 3:
-                        err_4 = _a.sent();
-                        res.status(400).send(err_4);
+                        err_3 = _a.sent();
+                        res.status(400).send(err_3);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -165,7 +153,7 @@ var TaskController = /** @class */ (function () {
     };
     TaskController.prototype.updateTask = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var updates, allowedOptions, isValidOptions, task_1, err_5;
+            var updates, allowedOptions, isValidOptions, task_1, err_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -187,13 +175,40 @@ var TaskController = /** @class */ (function () {
                             return [2 /*return*/, res.status(400).send({ error: "Failed to find task." })];
                         updates.forEach(function (update) { return task_1[update] = req.body[update]; });
                         task_1.save();
-                        res.status(204).send(task_1);
+                        res.status(200).send(task_1);
                         return [3 /*break*/, 4];
                     case 3:
-                        err_5 = _a.sent();
-                        res.status(400).send(err_5);
+                        err_4 = _a.sent();
+                        res.status(400).send(err_4);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    TaskController.prototype.deleteTaskById = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var task, err_5;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, Task_1.default.findOneAndDelete({
+                                _id: req.params.id,
+                                owner: new mongodb_1.ObjectId(req.query.decoded)
+                            })];
+                    case 1:
+                        task = _a.sent();
+                        if (!task) {
+                            res.status(400).send();
+                        }
+                        res.send({ operation: "Deleted the following task", task: task });
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_5 = _a.sent();
+                        res.status(400).send(err_5);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
                 }
             });
         });
@@ -214,6 +229,10 @@ var TaskController = /** @class */ (function () {
         decorators_1.patch('/:id'),
         decorators_1.use(auth_1.checkForAuth)
     ], TaskController.prototype, "updateTask", null);
+    __decorate([
+        decorators_1.del('/:id'),
+        decorators_1.use(auth_1.checkForAuth)
+    ], TaskController.prototype, "deleteTaskById", null);
     TaskController = __decorate([
         decorators_1.controller('/tasks')
     ], TaskController);

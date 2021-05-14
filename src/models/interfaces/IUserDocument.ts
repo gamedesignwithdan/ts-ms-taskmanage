@@ -6,6 +6,8 @@ export enum UserKeys {
     password = "password",
     email = "email",
     age = "age",
+    createdAt = "createdAt",
+    updatedAt = "updatedAt",
     tokens = "tokens",
     tasks = "tasks"
 }
@@ -26,6 +28,8 @@ export interface IUserDocument extends Document {
     [UserKeys.password]: string,
     [UserKeys.email]: string,
     [UserKeys.age]: number,
+    [UserKeys.createdAt]: string,
+    [UserKeys.updatedAt]: string,
     [UserKeys.tokens]: Token[];
     [UserKeys.tasks]: typeof Task[];
 }

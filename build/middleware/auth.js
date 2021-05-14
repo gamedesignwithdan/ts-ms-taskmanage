@@ -27,7 +27,7 @@ function checkForAuth(req, res, next) {
         next();
     }
     catch (err) {
-        res.status(401).send(err);
+        res.status(401).send({ error: "Unauthorised" });
     }
 }
 exports.checkForAuth = checkForAuth;

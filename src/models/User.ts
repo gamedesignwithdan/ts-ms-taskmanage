@@ -3,6 +3,7 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 import jwt from 'jsonwebtoken';
 import { IUserDocument, SafeUserResponse } from './interfaces/IUserDocument';
+import Task from "./Task";
 
 export interface IUser extends IUserDocument {
     generateAuthToken(): string;
@@ -53,7 +54,9 @@ const UserSchema = new Schema({
             required: true
         }
     }]
-})
+}, {
+    timestamps: true
+});
 
 UserSchema.methods.generateAuthToken = async function() {
     const user = this;
@@ -92,7 +95,14 @@ UserSchema.pre<IUser>("save", async function (next) {
     if (this.isModified('password')) {
         this.password = await bcrypt.hash(this.password, 8)
     }
+    this.updatedAt = new Date().toString();
     next()
+})
+
+UserSchema.pre<IUser>("remove", async function(next) {
+    const user = this;
+    await Task.deleteMany({owner: user._id})
+    next();
 })
 
 export const User: IUserModel = model<IUser, IUserModel>('User', UserSchema);

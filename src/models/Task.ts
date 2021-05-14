@@ -3,7 +3,9 @@ import mongoose, { model, Schema, Document } from "mongoose";
 export interface ITask extends Document {
     description: string,
     completed: boolean,
-    owner: mongoose.Types.ObjectId
+    owner: mongoose.Types.ObjectId,
+    createdAt: string,
+    updatedAt: string
 }
 
 const TaskSchema = new Schema({
@@ -21,6 +23,12 @@ const TaskSchema = new Schema({
         required: true,
         ref: "User"
     }
+}, {
+    timestamps: true
+})
+
+TaskSchema.pre<ITask>("save", async function(next) {
+    this.updatedAt = new Date().toString();
 })
 
 const Task = model<ITask>('Task', TaskSchema);

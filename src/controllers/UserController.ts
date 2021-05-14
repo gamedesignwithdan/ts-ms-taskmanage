@@ -29,6 +29,19 @@ export class UserController {
         }
     }
 
+    @get('/account-birthday')
+    @use(checkForAuth)
+    async getAccountBirthday(req: Request, res: Response) {
+        try {
+            const user = await User.findById(req.query.decoded)
+            if (!user) {
+                return res.status(400).send();
+            }
+            res.send(user.createdAt)
+        } catch(err) {
+
+        }
+    }
 
     @bodyValidator('email', 'password')
     @post('/login')
@@ -142,7 +155,8 @@ export class UserController {
     async deleteMe(req: Request, res: Response) {
         const id = req.query.decoded;
         try {
-            const user = await User.findByIdAndDelete(id);
+            const user = await User.findById(id);
+            user?.remove();
 
             if (!user) {
                 res.status(404).send();

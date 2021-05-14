@@ -7,6 +7,8 @@ var UserKeys;
     UserKeys["password"] = "password";
     UserKeys["email"] = "email";
     UserKeys["age"] = "age";
+    UserKeys["createdAt"] = "createdAt";
+    UserKeys["updatedAt"] = "updatedAt";
     UserKeys["tokens"] = "tokens";
     UserKeys["tasks"] = "tasks";
 })(UserKeys = exports.UserKeys || (exports.UserKeys = {}));

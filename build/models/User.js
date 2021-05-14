@@ -44,6 +44,7 @@ var mongoose_1 = require("mongoose");
 var validator = require('validator');
 var bcrypt = require('bcryptjs');
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+var Task_1 = __importDefault(require("./Task"));
 var UserSchema = new mongoose_1.Schema({
     name: {
         type: String,
@@ -84,6 +85,8 @@ var UserSchema = new mongoose_1.Schema({
                 required: true
             }
         }]
+}, {
+    timestamps: true
 });
 UserSchema.methods.generateAuthToken = function () {
     return __awaiter(this, void 0, void 0, function () {
@@ -137,6 +140,23 @@ UserSchema.pre("save", function (next) {
                     _a.password = _b.sent();
                     _b.label = 2;
                 case 2:
+                    this.updatedAt = new Date().toString();
+                    next();
+                    return [2 /*return*/];
+            }
+        });
+    });
+});
+UserSchema.pre("remove", function (next) {
+    return __awaiter(this, void 0, void 0, function () {
+        var user;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    user = this;
+                    return [4 /*yield*/, Task_1.default.deleteMany({ owner: user._id })];
+                case 1:
+                    _a.sent();
                     next();
                     return [2 /*return*/];
             }
