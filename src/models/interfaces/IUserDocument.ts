@@ -9,7 +9,8 @@ export enum UserKeys {
     createdAt = "createdAt",
     updatedAt = "updatedAt",
     tokens = "tokens",
-    tasks = "tasks"
+    tasks = "tasks",
+    avatar = "avatar"
 }
 
 export type SafeUserResponse = {
@@ -24,12 +25,13 @@ export type Token = {
 }
 
 export interface IUserDocument extends Document {
-    [UserKeys.name]: string,
-    [UserKeys.password]: string,
-    [UserKeys.email]: string,
-    [UserKeys.age]: number,
-    [UserKeys.createdAt]: string,
-    [UserKeys.updatedAt]: string,
+    [UserKeys.name]: string;
+    [UserKeys.password]: string;
+    [UserKeys.email]: string;
+    [UserKeys.age]: number;
+    [UserKeys.createdAt]: string;
+    [UserKeys.updatedAt]: string;
+    [UserKeys.avatar]: Buffer | undefined;
     [UserKeys.tokens]: Token[];
     [UserKeys.tasks]: typeof Task[];
 }

@@ -1,9 +1,46 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { isValidObjectId } from "mongoose";
 import { bodyValidator, controller, get, patch, post, use, del } from '../decorators'
 import { UserKeys, Token } from '../models/interfaces/IUserDocument';
 import User from '../models/User';
 import { checkForAuth } from '../middleware/auth';
+import multer from 'multer';
+
+const upload = multer({
+    dest: "avatars/",
+    limits: {
+        fileSize: 1000000
+    },
+    fileFilter(req, file, cb) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+            return cb(new Error("Please upload correct file type - png, jpg, jpeg"))
+        }
+        cb(null, true)
+    }
+}).single('avatar')
+
+// Promise wrapping the Multer upload
+const multerPromise = (req: Request, res: Response) => {
+    return new Promise((resolve, reject) => {
+        upload(req, res, (err: any) => {
+            if(!err) {
+                console.log("no error!")
+                resolve(req)
+            }
+            console.log(typeof err)
+            reject(err);
+        });
+    });
+};
+
+const uploadMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        await multerPromise(req, res);
+        next();
+    } catch(err) {
+        res.status(400).send({error: err.message})
+    }
+};
 
 @controller('/users')
 export class UserController {
@@ -26,6 +63,35 @@ export class UserController {
             res.status(200).send({user: user.getPublicProfile(), token: tokenForResponse})
         } catch(err) {
             res.status(404).send(err)
+        }
+    }
+
+    @post('/me/avatar')
+    @use(uploadMiddleware)
+    @use(checkForAuth)
+    async uploadFile(req: Request, res: Response) {
+        try {
+            const user = await User.findById(req.query.decoded);
+            if (!user) return res.status(400).send({error: "no user found"});
+            user.avatar = req.file.buffer;
+            await user.save();
+            res.status(200).send(user)
+        } catch(err) {
+            res.status(400).send(err)
+        }
+    }
+
+    @del('/me/avatar')
+    @use(checkForAuth)
+    async deleteFile(req: Request, res: Response) {
+        try {
+            const user = await User.findById(req.query.decoded);
+            if (!user) return res.status(400).send({error: "no user found"});
+            user.avatar = undefined;
+            await user.save();
+            res.status(200).send(user);
+        } catch(err) {
+            res.status(400).send(err)
         }
     }
 

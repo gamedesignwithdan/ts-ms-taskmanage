@@ -9,18 +9,33 @@ import { ObjectId } from 'mongodb';
 @controller('/tasks')
 export class TaskController {
     //  GET /tasks?completed=false OR /tasks/?completed=true
+    //  GET /tasks?limit=2&skip=1
+    //  GET /tasks?sortBy=createdAt_asc or /tasks?sortBy=createdAt_desc
     @get('/')
     @use(checkForAuth)
     async AllMyTasks(req: Request, res: Response) {
         const match: {[key:string]: boolean} = {};
+        const sort: {[key:string]: number} = {};
 
         if (req.query.completed) {
             match.completed = req.query.completed === 'true';
+        }
+
+        if (req.query.sortBy && typeof req.query.sortBy === "string") {
+            const parts = req.query.sortBy.split('_');
+            sort[parts[0]] = parts[1] === 'desc' ? -1 : 1;
         }
         try {
             const user = await User.findById(req.query.decoded);
             await user?.populate({
                 path: "tasks",
+                options: {
+                    limit: parseInt(req?.query?.limit as string),
+                    skip: parseInt(req?.query?.skip as string),
+                    sort: {
+                        createdAt: -1
+                    }
+                },
                 match
             }).execPopulate();
             res.send(user?.tasks)

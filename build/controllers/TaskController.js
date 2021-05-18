@@ -66,32 +66,47 @@ var TaskController = /** @class */ (function () {
     function TaskController() {
     }
     //  GET /tasks?completed=false OR /tasks/?completed=true
+    //  GET /tasks?limit=2&skip=1
+    //  GET /tasks?sortBy=createdAt_asc or /tasks?sortBy=createdAt_desc
     TaskController.prototype.AllMyTasks = function (req, res) {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var match, user, err_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var match, sort, parts, user, err_1;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
                         match = {};
+                        sort = {};
                         if (req.query.completed) {
                             match.completed = req.query.completed === 'true';
                         }
-                        _a.label = 1;
+                        if (req.query.sortBy && typeof req.query.sortBy === "string") {
+                            parts = req.query.sortBy.split('_');
+                            sort[parts[0]] = parts[1] === 'desc' ? -1 : 1;
+                        }
+                        _c.label = 1;
                     case 1:
-                        _a.trys.push([1, 4, , 5]);
+                        _c.trys.push([1, 4, , 5]);
                         return [4 /*yield*/, User_1.default.findById(req.query.decoded)];
                     case 2:
-                        user = _a.sent();
+                        user = _c.sent();
                         return [4 /*yield*/, (user === null || user === void 0 ? void 0 : user.populate({
                                 path: "tasks",
+                                options: {
+                                    limit: parseInt((_a = req === null || req === void 0 ? void 0 : req.query) === null || _a === void 0 ? void 0 : _a.limit),
+                                    skip: parseInt((_b = req === null || req === void 0 ? void 0 : req.query) === null || _b === void 0 ? void 0 : _b.skip),
+                                    sort: {
+                                        createdAt: -1
+                                    }
+                                },
                                 match: match
                             }).execPopulate())];
                     case 3:
-                        _a.sent();
+                        _c.sent();
                         res.send(user === null || user === void 0 ? void 0 : user.tasks);
                         return [3 /*break*/, 5];
                     case 4:
-                        err_1 = _a.sent();
+                        err_1 = _c.sent();
                         res.status(400).send({ error: "Unauthorised!" });
                         return [3 /*break*/, 5];
                     case 5: return [2 /*return*/];

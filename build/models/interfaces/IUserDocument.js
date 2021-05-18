@@ -11,4 +11,5 @@ var UserKeys;
     UserKeys["updatedAt"] = "updatedAt";
     UserKeys["tokens"] = "tokens";
     UserKeys["tasks"] = "tasks";
+    UserKeys["avatar"] = "avatar";
 })(UserKeys = exports.UserKeys || (exports.UserKeys = {}));
