@@ -358,27 +358,27 @@ var UserController = /** @class */ (function () {
     //         res.status(500).send(err)
     //     }
     // }
-    UserController.prototype.allUsers = function (req, res) {
-        return __awaiter(this, void 0, void 0, function () {
-            var users, err_11;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, User_1.default.find({}, { avatar: 0 })];
-                    case 1:
-                        users = _a.sent();
-                        res.send(users);
-                        return [3 /*break*/, 3];
-                    case 2:
-                        err_11 = _a.sent();
-                        res.send(err_11);
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
+    // UserController.prototype.allUsers = function (req, res) {
+    //     return __awaiter(this, void 0, void 0, function () {
+    //         var users, err_11;
+    //         return __generator(this, function (_a) {
+    //             switch (_a.label) {
+    //                 case 0:
+    //                     _a.trys.push([0, 2, , 3]);
+    //                     return [4 /*yield*/, User_1.default.find({}, { avatar: 0 })];
+    //                 case 1:
+    //                     users = _a.sent();
+    //                     res.send(users);
+    //                     return [3 /*break*/, 3];
+    //                 case 2:
+    //                     err_11 = _a.sent();
+    //                     res.send(err_11);
+    //                     return [3 /*break*/, 3];
+    //                 case 3: return [2 /*return*/];
+    //             }
+    //         });
+    //     });
+    // };
     UserController.prototype.updateMe = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
             var updates, allowedUpdates, isValidOptions, id, user_1, _a, err_12;
