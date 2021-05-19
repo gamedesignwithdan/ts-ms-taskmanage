@@ -16,8 +16,8 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(AppRouter.getInstance());
 
-app.get('', (req,res) => {
-    res.send(port)
+app.get('/', (req,res) => {
+    res.send(`${port} is the port`)
 })
 
 app.listen(port, () => {
