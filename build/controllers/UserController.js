@@ -52,8 +52,10 @@ var IUserDocument_1 = require("../models/interfaces/IUserDocument");
 var User_1 = __importDefault(require("../models/User"));
 var auth_1 = require("../middleware/auth");
 var multer_1 = __importDefault(require("multer"));
+var sharp_1 = __importDefault(require("sharp"));
+var EmailControl_1 = require("../EmailControl");
 var upload = multer_1.default({
-    dest: "avatars/",
+    // dest: "avatars/",
     limits: {
         fileSize: 1000000
     },
@@ -69,10 +71,9 @@ var multerPromise = function (req, res) {
     return new Promise(function (resolve, reject) {
         upload(req, res, function (err) {
             if (!err) {
-                console.log("no error!");
+                console.log("File successfully attached to request.");
                 resolve(req);
             }
-            console.log(typeof err);
             reject(err);
         });
     });
@@ -133,36 +134,63 @@ var UserController = /** @class */ (function () {
             });
         });
     };
-    UserController.prototype.uploadFile = function (req, res) {
+    UserController.prototype.getUserAvatar = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
             var user, err_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 3, , 4]);
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, User_1.default.findById(req.params.id)];
+                    case 1:
+                        user = _a.sent();
+                        if (!user || !user.avatar) {
+                            throw new Error();
+                        }
+                        res.set('Content-Type', 'image/jpg');
+                        res.send(user.avatar);
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_3 = _a.sent();
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    UserController.prototype.uploadFile = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var user, buffer, err_4;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 4, , 5]);
                         return [4 /*yield*/, User_1.default.findById(req.query.decoded)];
                     case 1:
                         user = _a.sent();
                         if (!user)
                             return [2 /*return*/, res.status(400).send({ error: "no user found" })];
-                        user.avatar = req.file.buffer;
-                        return [4 /*yield*/, user.save()];
+                        return [4 /*yield*/, sharp_1.default(req.file.buffer).resize({ width: 500, height: 500 }).png().toBuffer()];
                     case 2:
+                        buffer = _a.sent();
+                        user.avatar = buffer;
+                        return [4 /*yield*/, user.save()];
+                    case 3:
                         _a.sent();
                         res.status(200).send(user);
-                        return [3 /*break*/, 4];
-                    case 3:
-                        err_3 = _a.sent();
-                        res.status(400).send(err_3);
-                        return [3 /*break*/, 4];
-                    case 4: return [2 /*return*/];
+                        return [3 /*break*/, 5];
+                    case 4:
+                        err_4 = _a.sent();
+                        res.status(400).send(err_4);
+                        return [3 /*break*/, 5];
+                    case 5: return [2 /*return*/];
                 }
             });
         });
     };
     UserController.prototype.deleteFile = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var user, err_4;
+            var user, err_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -176,11 +204,12 @@ var UserController = /** @class */ (function () {
                         return [4 /*yield*/, user.save()];
                     case 2:
                         _a.sent();
+                        EmailControl_1.EmailControl.sendCancellationEmail(user.email, user.name);
                         res.status(200).send(user);
                         return [3 /*break*/, 4];
                     case 3:
-                        err_4 = _a.sent();
-                        res.status(400).send(err_4);
+                        err_5 = _a.sent();
+                        res.status(400).send(err_5);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -189,7 +218,7 @@ var UserController = /** @class */ (function () {
     };
     UserController.prototype.getAccountBirthday = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var user, err_5;
+            var user, err_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -203,7 +232,7 @@ var UserController = /** @class */ (function () {
                         res.send(user.createdAt);
                         return [3 /*break*/, 3];
                     case 2:
-                        err_5 = _a.sent();
+                        err_6 = _a.sent();
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
                 }
@@ -212,7 +241,7 @@ var UserController = /** @class */ (function () {
     };
     UserController.prototype.loginUser = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var user, tokenString, err_6;
+            var user, tokenString, err_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -228,7 +257,7 @@ var UserController = /** @class */ (function () {
                         res.status(201).send({ user: user.getPublicProfile(), token: tokenString });
                         return [3 /*break*/, 4];
                     case 3:
-                        err_6 = _a.sent();
+                        err_7 = _a.sent();
                         res.status(401).send({ err: "Failed to authorise user - please check your password and email are correct." });
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
@@ -238,7 +267,7 @@ var UserController = /** @class */ (function () {
     };
     UserController.prototype.logoutUser = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var user, requestToken_1, err_7;
+            var user, requestToken_1, err_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -254,8 +283,8 @@ var UserController = /** @class */ (function () {
                         res.send();
                         return [3 /*break*/, 3];
                     case 2:
-                        err_7 = _a.sent();
-                        res.status(400).send(err_7);
+                        err_8 = _a.sent();
+                        res.status(400).send(err_8);
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
                 }
@@ -264,7 +293,7 @@ var UserController = /** @class */ (function () {
     };
     UserController.prototype.logoutAllJWTs = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var user, err_8;
+            var user, err_9;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -279,8 +308,8 @@ var UserController = /** @class */ (function () {
                         res.status(200).send();
                         return [3 /*break*/, 3];
                     case 2:
-                        err_8 = _a.sent();
-                        res.status(400).send(err_8);
+                        err_9 = _a.sent();
+                        res.status(400).send(err_9);
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
                 }
@@ -289,7 +318,7 @@ var UserController = /** @class */ (function () {
     };
     UserController.prototype.createUser = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var user, tokenString, err_9;
+            var user, tokenString, err_10;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -304,11 +333,12 @@ var UserController = /** @class */ (function () {
                         return [4 /*yield*/, user.save()];
                     case 3:
                         _a.sent();
+                        EmailControl_1.EmailControl.sendWelcomeEmail(user.email, user.name);
                         res.status(201).send({ user: user.getPublicProfile() });
                         return [3 /*break*/, 5];
                     case 4:
-                        err_9 = _a.sent();
-                        res.status(400).send(err_9);
+                        err_10 = _a.sent();
+                        res.status(400).send(err_10);
                         return [3 /*break*/, 5];
                     case 5: return [2 /*return*/];
                 }
@@ -341,7 +371,7 @@ var UserController = /** @class */ (function () {
     // }
     UserController.prototype.updateMe = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var updates, allowedUpdates, isValidOptions, id, user_1, _a, err_10;
+            var updates, allowedUpdates, isValidOptions, id, user_1, _a, err_11;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -371,8 +401,8 @@ var UserController = /** @class */ (function () {
                         res.status(200).send({ user: user_1.getPublicProfile() });
                         return [3 /*break*/, 6];
                     case 5:
-                        err_10 = _b.sent();
-                        res.status(400).send(err_10);
+                        err_11 = _b.sent();
+                        res.status(400).send(err_11);
                         return [3 /*break*/, 6];
                     case 6: return [2 /*return*/];
                 }
@@ -381,7 +411,7 @@ var UserController = /** @class */ (function () {
     };
     UserController.prototype.deleteMe = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var id, user, err_11;
+            var id, user, err_12;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -399,8 +429,8 @@ var UserController = /** @class */ (function () {
                         res.send(user);
                         return [3 /*break*/, 4];
                     case 3:
-                        err_11 = _a.sent();
-                        res.status(500).send(err_11);
+                        err_12 = _a.sent();
+                        res.status(500).send(err_12);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -411,6 +441,9 @@ var UserController = /** @class */ (function () {
         decorators_1.get('/me'),
         decorators_1.use(auth_1.checkForAuth)
     ], UserController.prototype, "getLoggedIn", null);
+    __decorate([
+        decorators_1.get('/:id/avatar')
+    ], UserController.prototype, "getUserAvatar", null);
     __decorate([
         decorators_1.post('/me/avatar'),
         decorators_1.use(uploadMiddleware),

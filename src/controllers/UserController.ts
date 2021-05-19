@@ -5,9 +5,11 @@ import { UserKeys, Token } from '../models/interfaces/IUserDocument';
 import User from '../models/User';
 import { checkForAuth } from '../middleware/auth';
 import multer from 'multer';
+import sharp from 'sharp';
+import { EmailControl } from '../EmailControl';
 
 const upload = multer({
-    dest: "avatars/",
+    // dest: "avatars/",
     limits: {
         fileSize: 1000000
     },
@@ -24,10 +26,9 @@ const multerPromise = (req: Request, res: Response) => {
     return new Promise((resolve, reject) => {
         upload(req, res, (err: any) => {
             if(!err) {
-                console.log("no error!")
+                console.log("File successfully attached to request.")
                 resolve(req)
             }
-            console.log(typeof err)
             reject(err);
         });
     });
@@ -66,6 +67,21 @@ export class UserController {
         }
     }
 
+    @get('/:id/avatar')
+    async getUserAvatar(req: Request, res: Response) {
+        try {
+            const user = await User.findById(req.params.id);
+            if (!user || !user.avatar) {
+                throw new Error();
+            }
+
+            res.set('Content-Type', 'image/jpg')
+            res.send(user.avatar);
+        } catch(err) {
+
+        }
+    }
+
     @post('/me/avatar')
     @use(uploadMiddleware)
     @use(checkForAuth)
@@ -73,8 +89,11 @@ export class UserController {
         try {
             const user = await User.findById(req.query.decoded);
             if (!user) return res.status(400).send({error: "no user found"});
-            user.avatar = req.file.buffer;
+            const buffer: Buffer = await sharp(req.file.buffer).resize({ width: 500, height: 500 }).png().toBuffer();
+            
+            user.avatar = buffer;
             await user.save();
+
             res.status(200).send(user)
         } catch(err) {
             res.status(400).send(err)
@@ -89,6 +108,7 @@ export class UserController {
             if (!user) return res.status(400).send({error: "no user found"});
             user.avatar = undefined;
             await user.save();
+            EmailControl.sendCancellationEmail(user.email, user.name);
             res.status(200).send(user);
         } catch(err) {
             res.status(400).send(err)
@@ -163,6 +183,7 @@ export class UserController {
         user.tokens = user.tokens.concat({ _id: user.id, token: tokenString })
         try {
             await user.save();
+            EmailControl.sendWelcomeEmail(user.email, user.name);
             res.status(201).send({user: user.getPublicProfile()});
         } catch(err) {
             res.status(400).send(err);
