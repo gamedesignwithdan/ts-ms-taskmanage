@@ -207,15 +207,15 @@ export class UserController {
     //     }
     // }
 
-    // @get('/')
-    // async allUsers(req: Request, res: Response) {
-    //     try {
-    //         const users = await User.find();
-    //         res.send(users);
-    //     } catch(err) {
-    //         res.send(err)
-    //     }
-    // }
+    @get('/')
+    async allUsers(req: Request, res: Response) {
+        try {
+            const users = await User.find();
+            res.send(users);
+        } catch(err) {
+            res.send(err)
+        }
+    }
 
     @patch('/me')
     @use(checkForAuth)
