@@ -16,6 +16,10 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(AppRouter.getInstance());
 
+app.get('', (req,res) => {
+    res.send(port)
+})
+
 app.listen(port, () => {
     console.log(`Listening! See: http://localhost:${port}`)
 })
