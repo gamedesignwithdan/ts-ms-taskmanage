@@ -16,9 +16,9 @@ app.use(cors_1.default());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.json());
 app.use(AppRouter_1.AppRouter.getInstance());
-if (process.env.NODE_ENV === 'production') {
-    app.use(express_1.default.static('build'));
-}
+// if (process.env.NODE_ENV === 'production') {
+// 	app.use(express.static('build'));
+// }
 app.listen(port, function () {
     console.log("Listening! See: http://localhost:" + port);
 });

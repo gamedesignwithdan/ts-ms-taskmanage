@@ -16,10 +16,6 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(AppRouter.getInstance());
 
-if (process.env.NODE_ENV === 'production') {
-	app.use(express.static('build'));
-}
-
 app.listen(port, () => {
     console.log(`Listening! See: http://localhost:${port}`)
 })
