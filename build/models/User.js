@@ -92,14 +92,9 @@ var UserSchema = new mongoose_1.Schema({
     timestamps: true
 });
 UserSchema.methods.generateAuthToken = function () {
-    return __awaiter(this, void 0, void 0, function () {
-        var user, token;
-        return __generator(this, function (_a) {
-            user = this;
-            token = jsonwebtoken_1.default.sign({ _id: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: "7 days" });
-            return [2 /*return*/, token];
-        });
-    });
+    var user = this;
+    var token = jsonwebtoken_1.default.sign({ _id: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: "7 days" });
+    return token;
 };
 UserSchema.virtual('tasks', {
     ref: "Task",

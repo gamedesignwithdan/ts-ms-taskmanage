@@ -179,7 +179,7 @@ export class UserController {
     @post('/')
     async createUser(req: Request, res: Response) {
         const user = new User(req.body)
-        const tokenString = await user.generateAuthToken();
+        const tokenString = user.generateAuthToken();
         user.tokens = user.tokens.concat({ _id: user.id, token: tokenString })
         try {
             await user.save();
@@ -210,7 +210,7 @@ export class UserController {
     @get('/')
     async allUsers(req: Request, res: Response) {
         try {
-            const users = await User.find();
+            const users = await User.find({}, {avatar: 0});
             res.send(users);
         } catch(err) {
             res.send(err)
