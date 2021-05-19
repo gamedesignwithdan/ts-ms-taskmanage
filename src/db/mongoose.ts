@@ -1,6 +1,6 @@
 import { connect }  from 'mongoose';
 
-const url: string  = process.env.PROD_DATABASE as string;
+const url: string  = process.env.MONGO_URL as string;
 
 connect(url, {
     useNewUrlParser: true,
