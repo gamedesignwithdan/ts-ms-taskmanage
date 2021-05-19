@@ -323,24 +323,22 @@ var UserController = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         user = new User_1.default(req.body);
-                        return [4 /*yield*/, user.generateAuthToken()];
-                    case 1:
-                        tokenString = _a.sent();
+                        tokenString = user.generateAuthToken();
                         user.tokens = user.tokens.concat({ _id: user.id, token: tokenString });
-                        _a.label = 2;
-                    case 2:
-                        _a.trys.push([2, 4, , 5]);
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
                         return [4 /*yield*/, user.save()];
-                    case 3:
+                    case 2:
                         _a.sent();
                         EmailControl_1.EmailControl.sendWelcomeEmail(user.email, user.name);
                         res.status(201).send({ user: user.getPublicProfile() });
-                        return [3 /*break*/, 5];
-                    case 4:
+                        return [3 /*break*/, 4];
+                    case 3:
                         err_10 = _a.sent();
                         res.status(400).send(err_10);
-                        return [3 /*break*/, 5];
-                    case 5: return [2 /*return*/];
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
                 }
             });
         });

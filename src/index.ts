@@ -11,14 +11,14 @@ import './controllers/UserController';
 const app = express();
 const port = process.env.PORT;
 
-app.get('/', (req, res) => {
-    res.send("Welcome")
-})
-
 app.use(cors())
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(AppRouter.getInstance());
+
+if (process.env.NODE_ENV === 'production') {
+	app.use(express.static('build'));
+}
 
 app.listen(port, () => {
     console.log(`Listening! See: http://localhost:${port}`)

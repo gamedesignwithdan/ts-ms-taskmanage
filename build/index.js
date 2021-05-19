@@ -12,13 +12,13 @@ require("./controllers/TaskController");
 require("./controllers/UserController");
 var app = express_1.default();
 var port = process.env.PORT;
-app.get('/', function (req, res) {
-    res.send("Welcome");
-});
 app.use(cors_1.default());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.json());
 app.use(AppRouter_1.AppRouter.getInstance());
+if (process.env.NODE_ENV === 'production') {
+    app.use(express_1.default.static('build'));
+}
 app.listen(port, function () {
     console.log("Listening! See: http://localhost:" + port);
 });
