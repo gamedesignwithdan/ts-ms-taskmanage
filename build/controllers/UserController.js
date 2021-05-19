@@ -360,18 +360,30 @@ var UserController = /** @class */ (function () {
     //         res.status(500).send(err)
     //     }
     // }
-    // @get('/')
-    // async allUsers(req: Request, res: Response) {
-    //     try {
-    //         const users = await User.find();
-    //         res.send(users);
-    //     } catch(err) {
-    //         res.send(err)
-    //     }
-    // }
+    UserController.prototype.allUsers = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var users, err_11;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, User_1.default.find()];
+                    case 1:
+                        users = _a.sent();
+                        res.send(users);
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_11 = _a.sent();
+                        res.send(err_11);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
     UserController.prototype.updateMe = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var updates, allowedUpdates, isValidOptions, id, user_1, _a, err_11;
+            var updates, allowedUpdates, isValidOptions, id, user_1, _a, err_12;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -401,8 +413,8 @@ var UserController = /** @class */ (function () {
                         res.status(200).send({ user: user_1.getPublicProfile() });
                         return [3 /*break*/, 6];
                     case 5:
-                        err_11 = _b.sent();
-                        res.status(400).send(err_11);
+                        err_12 = _b.sent();
+                        res.status(400).send(err_12);
                         return [3 /*break*/, 6];
                     case 6: return [2 /*return*/];
                 }
@@ -411,7 +423,7 @@ var UserController = /** @class */ (function () {
     };
     UserController.prototype.deleteMe = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var id, user, err_12;
+            var id, user, err_13;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -429,8 +441,8 @@ var UserController = /** @class */ (function () {
                         res.send(user);
                         return [3 /*break*/, 4];
                     case 3:
-                        err_12 = _a.sent();
-                        res.status(500).send(err_12);
+                        err_13 = _a.sent();
+                        res.status(500).send(err_13);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -472,6 +484,9 @@ var UserController = /** @class */ (function () {
     __decorate([
         decorators_1.post('/')
     ], UserController.prototype, "createUser", null);
+    __decorate([
+        decorators_1.get('/')
+    ], UserController.prototype, "allUsers", null);
     __decorate([
         decorators_1.patch('/me'),
         decorators_1.use(auth_1.checkForAuth)

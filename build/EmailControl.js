@@ -7,17 +7,6 @@ exports.EmailControl = void 0;
 var nodemailer_1 = __importDefault(require("nodemailer"));
 var google = require('googleapis').google;
 var _a = process.env, CLIENT_ID = _a.CLIENT_ID, CLIENT_SECRET = _a.CLIENT_SECRET, EMAIL = _a.EMAIL, REFRESH_TOKEN = _a.REFRESH_TOKEN;
-// const OAuth2 = google.auth.OAuth2;
-// const { CLIENT_ID, CLIENT_SECRET } = process.env
-// const oauth2Client = new OAuth2(
-//     CLIENT_ID,
-//     CLIENT_SECRET,
-//     "https://developers.google.com/oauthplayground" // Redirect URL
-// );
-// oauth2Client.setCredentials({
-//     refresh_token: process.env.REFRESH_TOKEN
-// })
-// const accessToken = oauth2Client.getAccessToken();
 var EmailControl = /** @class */ (function () {
     function EmailControl() {
     }

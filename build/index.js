@@ -7,12 +7,14 @@ var express_1 = __importDefault(require("express"));
 var cors_1 = __importDefault(require("cors"));
 require('dotenv').config();
 var AppRouter_1 = require("./AppRouter");
-// import { EmailControl } from './EmailControl';
 require("./db/mongoose");
 require("./controllers/TaskController");
 require("./controllers/UserController");
 var app = express_1.default();
-var port = process.env.PORT || 1010;
+var port = process.env.PORT;
+app.get('/', function (req, res) {
+    res.send("Welcome");
+});
 app.use(cors_1.default());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.json());
