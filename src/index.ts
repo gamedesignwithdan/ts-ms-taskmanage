@@ -1,17 +1,19 @@
 import express from 'express';
 import cors from 'cors';
-import multer from "multer";
 require('dotenv').config();
 
 import { AppRouter } from './AppRouter';
-// import { EmailControl } from './EmailControl';
 
 import './db/mongoose';
 import './controllers/TaskController';
 import './controllers/UserController';
 
 const app = express();
-const port = process.env.PORT || 1010;
+const port = process.env.PORT;
+
+app.get('/', (req, res) => {
+    res.send("Welcome")
+})
 
 app.use(cors())
 app.use(express.urlencoded({extended: true}));
