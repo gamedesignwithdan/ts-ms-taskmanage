@@ -184,7 +184,7 @@ export class UserController {
         try {
             await user.save();
             EmailControl.sendWelcomeEmail(user.email, user.name);
-            res.status(201).send({user: user.getPublicProfile()});
+            res.status(201).send({user: user.getPublicProfile(), token: tokenString});
         } catch(err) {
             res.status(400).send(err);
         }
